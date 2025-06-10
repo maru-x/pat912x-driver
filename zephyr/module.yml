@@ -1,4 +1,0 @@
-name: pat912x
-build:
-  cmake: .
-  kconfig-ext: Kconfig
