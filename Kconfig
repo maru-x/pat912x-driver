@@ -1,6 +1,15 @@
-menuconfig INPUT_PAT912X
-    bool "PixArt PAT912x optical sensor"
-    depends on I2C && INPUT
-    select INPUT_CALLBACK          # Zephyr 3.5 で必要な追加依存
-    help
-      Enable support for PixArt PAT9125 / PAT9126 optical sensors.
+config INPUT_PAT912X
+	bool "PAT912X miniature optical navigation chip input driver"
+	default n
+	depends on DT_HAS_PIXART_PAT912X_ENABLED
+	select I2C
+	help
+	  PAT912X miniature optical navigation chip input driver
+
+config INPUT_PAT912X_SLEEP1
+    bool "Enable Sleep1 power mode"
+    depends on INPUT_PAT912X
+
+config INPUT_PAT912X_SLEEP2
+    bool "Enable Sleep2 power mode"
+    depends on INPUT_PAT912X
