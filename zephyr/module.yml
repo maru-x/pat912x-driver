@@ -2,3 +2,4 @@ name: pat912x
 build:
   cmake: .
   kconfig: drivers/input/Kconfig.pat912x
+  dts_root: modules/zephyr/pat912x/dts
