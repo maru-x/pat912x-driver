@@ -1,7 +1,0 @@
-config INPUT_PAT912X
-	bool "PAT912X miniature optical navigation chip input driver"
-	default n
-	depends on DT_HAS_PIXART_PAT912X_ENABLED
-	select I2C
-	help
-	  PAT912X miniature optical navigation chip input driver
