@@ -1,0 +1,6 @@
+menuconfig INPUT_PAT912X
+    bool "PixArt PAT912x optical sensor"
+    depends on I2C && INPUT
+    select INPUT_CALLBACK          # Zephyr 3.5 で必要な追加依存
+    help
+      Enable support for PixArt PAT9125 / PAT9126 optical sensors.
