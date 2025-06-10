@@ -5,11 +5,3 @@ config INPUT_PAT912X
 	select I2C
 	help
 	  PAT912X miniature optical navigation chip input driver
-
-config INPUT_PAT912X_SLEEP1
-    bool "Enable Sleep1 power mode"
-    depends on INPUT_PAT912X
-
-config INPUT_PAT912X_SLEEP2
-    bool "Enable Sleep2 power mode"
-    depends on INPUT_PAT912X
