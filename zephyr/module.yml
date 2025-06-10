@@ -1,4 +1,4 @@
 name: pat912x
 build:
   cmake: .
-  kconfig: Kconfig
+  kconfig: drivers/input/Kconfig.pat912x
