@@ -64,9 +64,8 @@ LOG_MODULE_REGISTER(input_pat912x, CONFIG_INPUT_LOG_LEVEL);
 #ifndef sign_extend
 static inline int sign_extend(unsigned int value, int index)
 {
-    struct { signed int n:1; } s;
-    s.n = value >> index;
-    return (value & ((1U << index) - 1)) - (s.n << index);
+    int shift = sizeof(int) * 8 - 1 - index;
+    return (int)(value << shift) >> shift;
 }
 #endif
 // ...existing code...
