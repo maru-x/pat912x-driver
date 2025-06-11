@@ -164,6 +164,7 @@ int pat912x_set_resolution(const struct device *dev,
 {
 	const struct pat912x_config *cfg = dev->config;
 	int ret;
+	uint8_t res_data;
 
 	if (res_x_cpi >= 0) {
 		if (!IN_RANGE(res_x_cpi, 0, RES_MAX)) {
@@ -173,6 +174,11 @@ int pat912x_set_resolution(const struct device *dev,
 
 		ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_RES_X,
 					    res_x_cpi / RES_SCALING_FACTOR);
+		if (ret < 0) {
+			return ret;
+		}
+		
+		ret = i2c_burst_read_dt(&cfg->i2c, PAT912X_RES_X, res_data, sizeof(res_data));
 		if (ret < 0) {
 			return ret;
 		}
