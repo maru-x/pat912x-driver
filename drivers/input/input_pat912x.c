@@ -225,6 +225,9 @@ static int pat912x_configure(const struct device *dev)
 	if (ret < 0) {
 		return ret;
 	}
+	
+	uint8_t temp[32];
+	i2c_burst_read_dt(&cfg->i2c, PAT912X_PRODUCT_ID1, temp, sizeof(temp));
 
 	ret = pat912x_set_resolution(dev, cfg->res_x_cpi, cfg->res_y_cpi);
 	if (ret < 0) {
