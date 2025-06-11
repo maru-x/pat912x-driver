@@ -92,6 +92,7 @@ struct pat912x_config {
 	bool invert_y;
 	bool sleep1_enable;
 	bool sleep2_enable;
+	bool mouse_wheel_y_inverted;
 };
 
 struct pat912x_data {
