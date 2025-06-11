@@ -57,3 +57,44 @@ properties:
     type: boolean
     description: |
       Enable sleep2 mode, only valid if sleep1 is also enabled.
+
+  mouse-wheel-x-inverted:
+    type: boolean
+    description: "Invert the X-axis movement of the mouse wheel."
+
+  mouse-wheel-y-inverted:
+    type: boolean
+    description: "Invert the Y-axis movement of the mouse wheel."
+
+  automouse-layer:
+    type: int
+    default: -1
+    required: false
+    description: Layer number to activate on mouse movement
+
+  scroll-layer:
+    type: int
+    default: -1
+    required: false
+    description: Layer number to activate on scroll wheel movement
+
+  snipe-layer:
+    type: int
+    default: -1
+    required: false
+    description: Layer number to activate on snipe button press
+
+  scroll-ticks:
+    type: int
+    default: 50
+    description: "Number of scroll wheel ticks to send per scroll wheel movement event."
+
+  automouse_timeout_ms:
+    type: int
+    default: 5000
+    description: "Time in milliseconds to wait before deactivating the automouse layer after no movement."
+
+  snipe-ticks:
+    type: int
+    default: 5
+    description: "Number of ticks to send when the snipe button is pressed."
