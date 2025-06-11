@@ -219,9 +219,7 @@ static void pat912x_motion_work_handler(struct k_work *work)
 		input_report_rel(data->dev, INPUT_REL_X, x, false, K_FOREVER);
 		input_report_rel(data->dev, INPUT_REL_Y, y, true, K_FOREVER);
 
-		if (automouse_triggered || zmk_keymap_highest_layer_active() != AUTOMOUSE_LAYER) {
-			activate_automouse_layer();
-		}
+
 	}
 
 
