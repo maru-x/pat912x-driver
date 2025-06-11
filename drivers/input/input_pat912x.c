@@ -13,13 +13,14 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/input/input.h>
-#include <zephyr/input/input_pat912x.h>
+//#include <zephyr/input/input_pat912x.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/pm/device.h>
 #include <zephyr/pm/device_runtime.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/util.h>
+#include "./input_pat912x.h"
 
 LOG_MODULE_REGISTER(input_pat912x, CONFIG_INPUT_LOG_LEVEL);
 
