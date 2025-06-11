@@ -58,6 +58,16 @@ LOG_MODULE_REGISTER(input_pat912x, CONFIG_INPUT_LOG_LEVEL);
 
 #define RESET_DELAY_MS 2
 
+// ...existing code...
+#ifndef sign_extend
+static inline int sign_extend(unsigned int value, int index)
+{
+    struct { signed int n:1; } s;
+    s.n = value >> index;
+    return (value & ((1U << index) - 1)) - (s.n << index);
+}
+#endif
+// ...existing code...
 struct pat912x_config {
 	struct i2c_dt_spec i2c;
 	struct gpio_dt_spec motion_gpio;
