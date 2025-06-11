@@ -325,20 +325,20 @@ static int pat912x_configure(const struct device *dev)
 		return ret;
 	}
 
-	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_SLEEP1, 0x33);
-	if (ret < 0) {
-		return ret;
-	}
+	// ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_SLEEP1, 0x33);
+	// if (ret < 0) {
+	// 	return ret;
+	// }
 
-	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_SLEEP2, 0x00);
-	if (ret < 0) {
-		return ret;
-	}
+	// ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_SLEEP2, 0x00);
+	// if (ret < 0) {
+	// 	return ret;
+	// }
 
-	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_OPERATION_MODE, 0x07);
-	if (ret < 0) {
-		return ret;
-	}
+	// ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_OPERATION_MODE, 0x07);
+	// if (ret < 0) {
+	// 	return ret;
+	// }
 
 	if (cfg->sleep1_enable && cfg->sleep2_enable) {
 		ret = i2c_reg_update_byte_dt(&cfg->i2c,
@@ -363,10 +363,10 @@ static int pat912x_configure(const struct device *dev)
 	// 	return ret;
 	// }
 
-	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT9126_NY_MIN, 0x00);
-	if (ret < 0) {
-		return ret;
-	}
+	// ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT9126_NY_MIN, 0x00);
+	// if (ret < 0) {
+	// 	return ret;
+	// }
 
 	return 0;
 }
