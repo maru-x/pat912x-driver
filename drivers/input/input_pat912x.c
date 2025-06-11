@@ -41,7 +41,9 @@ LOG_MODULE_REGISTER(input_pat912x, CONFIG_INPUT_LOG_LEVEL);
 #define PAT912X_FRAME_AVG	0x17
 #define PAT912X_ORIENTATION	0x19
 
-#define PRODUCT_ID_PAT9125EL 0x3191
+//#define PRODUCT_ID_PAT9125EL 0x3191
+
+#define PRODUCT_ID_PAT9126JA 0x3192
 
 #define CONFIGURATION_RESET 0x97
 #define CONFIGURATION_CLEAR 0x17
@@ -203,11 +205,16 @@ static int pat912x_configure(const struct device *dev)
 		return ret;
 	}
 
-	if (sys_get_be16(id) != PRODUCT_ID_PAT9125EL) {
+	if (sys_get_be16(id) != PRODUCT_ID_PAT9126JA) {
 		LOG_ERR("Invalid product id: %04x", sys_get_be16(id));
 		return -ENOTSUP;
 	}
 
+/*	if (sys_get_be16(id) != PRODUCT_ID_PAT9125EL) {
+		LOG_ERR("Invalid product id: %04x", sys_get_be16(id));
+		return -ENOTSUP;
+	}
+*/
 	/* Software reset */
 
 	i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_CONFIGURATION, CONFIGURATION_RESET);
