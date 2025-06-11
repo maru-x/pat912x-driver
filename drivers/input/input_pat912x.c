@@ -41,6 +41,9 @@ LOG_MODULE_REGISTER(input_pat912x, CONFIG_INPUT_LOG_LEVEL);
 #define PAT912X_FRAME_AVG	0x17
 #define PAT912X_ORIENTATION	0x19
 
+#define PAT9126_AE_ENABLE	0x2b
+#define PAT912X_NY_MIN		0x2d
+
 //#define PRODUCT_ID_PAT9125EL 0x3191
 
 #define PRODUCT_ID_PAT9126JA 0x3192
@@ -57,6 +60,8 @@ LOG_MODULE_REGISTER(input_pat912x, CONFIG_INPUT_LOG_LEVEL);
 #define OPERATION_MODE_SLEEP_12_EN (BIT(4) | BIT(3))
 
 #define PAT912X_DATA_SIZE_BITS 12
+
+#define PAT9126_AE_ENABLE_VAL	0x6D
 
 #define RESET_DELAY_MS 2
 
@@ -236,6 +241,21 @@ static int pat912x_configure(const struct device *dev)
 		return ret;
 	}
 
+	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_SLEEP1, 0x33);
+	if (ret < 0) {
+		return ret;
+	}
+
+	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_SLEEP2, 0x00);
+	if (ret < 0) {
+		return ret;
+	}
+
+	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_OPERATION, 0x07);
+	if (ret < 0) {
+		return ret;
+	}
+
 	if (cfg->sleep1_enable && cfg->sleep2_enable) {
 		ret = i2c_reg_update_byte_dt(&cfg->i2c,
 					     PAT912X_OPERATION_MODE,
@@ -252,6 +272,15 @@ static int pat912x_configure(const struct device *dev)
 		if (ret < 0) {
 			return ret;
 		}
+	}
+	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT9126_AE_ENABLE, PAT9126_AE_ENABLE_VAL);
+	if (ret < 0) {
+		return ret;
+	}
+
+	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT9126_NY_MIN, 0x00);
+	if (ret < 0) {
+		return ret;
 	}
 
 	return 0;
