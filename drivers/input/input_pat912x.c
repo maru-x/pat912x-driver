@@ -412,7 +412,8 @@ static int pat912x_init(const struct device *dev)
 
 	data->dev = dev;
 
-	k_work_init(&data->motion_work, pat912x_motion_work_handler);
+	// k_work_init(&data->motion_work, pat912x_motion_work_handler);
+	
 
 	if (!gpio_is_ready_dt(&cfg->motion_gpio)) {
 		LOG_ERR("%s is not ready", cfg->motion_gpio.port->name);
