@@ -106,8 +106,11 @@ struct pat912x_config {
 struct pat912x_data {
 	const struct device *dev;
 	struct k_work motion_work;
+	struct k_work timer_work;
 	struct gpio_callback motion_cb;
 };
+
+
 
 struct k_timer automouse_layer_timer;
 static bool automouse_triggered = false;
@@ -131,8 +134,18 @@ K_TIMER_DEFINE(automouse_layer_timer, deactivate_automouse_layer, NULL);
 
 static void pat912x_motion_work_handler(struct k_work *work)
 {
-    if (!motion_data_ptr) return;
-	struct pat912x_data *data = CONTAINER_OF(work, struct pat912x_data, motion_work);
+
+    if (!motion_timer_active) {
+        k_timer_start(&motion_timer, K_NO_WAIT, K_MSEC(MOTION_TIMER_MS));
+        motion_timer_active = true;
+    }
+}
+
+static void pat912x_timer_work_handler(struct k_work *work)
+{
+	struct pat912x_data *data = motion_data_ptr;
+	if (!motion_data_ptr) return;
+	// struct pat912x_data *data = CONTAINER_OF(work, struct pat912x_data, timer_work);
 //    struct pat912x_data *data = motion_data_ptr;
 	const struct device *dev = data->dev;
 	const struct pat912x_config *cfg = dev->config;
@@ -280,7 +293,7 @@ static void motion_timer_handler(struct k_timer *timer)
 	// 	return;
 	// }
 
-	k_work_submit(&data->motion_work);
+	k_work_submit(&data->timer_work);
 }
 
 static void pat912x_motion_handler(const struct device *gpio_dev,
@@ -289,10 +302,13 @@ static void pat912x_motion_handler(const struct device *gpio_dev,
 {
 	struct pat912x_data *data = CONTAINER_OF(cb, struct pat912x_data, motion_cb);
     motion_data_ptr = data;
-    if (!motion_timer_active) {
-        k_timer_start(&motion_timer, K_NO_WAIT, K_MSEC(MOTION_TIMER_MS));
-        motion_timer_active = true;
-    }
+
+	k_work_submit(&data->motion_work);
+
+    // if (!motion_timer_active) {
+    //     k_timer_start(&motion_timer, K_NO_WAIT, K_MSEC(MOTION_TIMER_MS));
+    //     motion_timer_active = true;
+    // }
 	// struct pat912x_data *data = CONTAINER_OF(
 	// 		cb, struct pat912x_data, motion_cb);
 
@@ -444,7 +460,7 @@ static int pat912x_init(const struct device *dev)
 	data->dev = dev;
 
 	k_work_init(&data->motion_work, pat912x_motion_work_handler);
-	
+	k_work_init(&data->timer_work, pat912x_timer_work_handler); 
 
 	if (!gpio_is_ready_dt(&cfg->motion_gpio)) {
 		LOG_ERR("%s is not ready", cfg->motion_gpio.port->name);
