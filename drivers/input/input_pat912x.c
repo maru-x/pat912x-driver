@@ -107,6 +107,8 @@ struct pat912x_data {
 struct k_timer automouse_layer_timer;
 static bool automouse_triggered = false;
 
+static struct k_timer motion_timer;
+
 static void activate_automouse_layer() {
     automouse_triggered = true;
     zmk_keymap_layer_activate(AUTOMOUSE_LAYER);
@@ -119,7 +121,9 @@ static void deactivate_automouse_layer(struct k_timer *timer) {
 }
 K_TIMER_DEFINE(automouse_layer_timer, deactivate_automouse_layer, NULL);
 
-static void pat912x_motion_work_handler(struct k_work *work)
+//static void pat912x_motion_work_handler(struct k_work *work)
+// タイマーハンドラ
+static void motion_timer_handler(struct k_timer *timer)
 {
 	struct pat912x_data *data = CONTAINER_OF(
 			work, struct pat912x_data, motion_work);
@@ -136,6 +140,8 @@ static void pat912x_motion_work_handler(struct k_work *work)
 	}
 
 	if (val== 0x04) {
+		k_timer_stop(&motion_timer);
+		LOG_DBG("Motion status is 0x04, stopping timer");
 		return;
 	}
 
@@ -241,17 +247,23 @@ static void pat912x_motion_work_handler(struct k_work *work)
 	// }
 
 	/* Trigger one more scan in case more data is available. */
-	k_work_submit(&data->motion_work);
+//	k_work_submit(&data->motion_work);
 }
+K_TIMER_DEFINE(motion_timer, motion_timer_handler, NULL);
 
 static void pat912x_motion_handler(const struct device *gpio_dev,
 				   struct gpio_callback *cb,
 				   uint32_t pins)
 {
-	struct pat912x_data *data = CONTAINER_OF(
-			cb, struct pat912x_data, motion_cb);
+	// struct pat912x_data *data = CONTAINER_OF(cb, struct pat912x_data, motion_cb);
+    // motion_data_ptr = data;
+    if (!k_timer_is_active(&motion_timer)) {
+        k_timer_start(&motion_timer, K_MSEC(1), K_MSEC(20));
+    }
+	// struct pat912x_data *data = CONTAINER_OF(
+	// 		cb, struct pat912x_data, motion_cb);
 
-	k_work_submit(&data->motion_work);
+	// k_work_submit(&data->motion_work);
 }
 
 int pat912x_set_resolution(const struct device *dev,
