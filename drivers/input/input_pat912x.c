@@ -124,12 +124,11 @@ static void deactivate_automouse_layer(struct k_timer *timer) {
 }
 K_TIMER_DEFINE(automouse_layer_timer, deactivate_automouse_layer, NULL);
 
-//static void pat912x_motion_work_handler(struct k_work *work)
-// タイマーハンドラ
-static void motion_timer_handler(struct k_timer *timer)
+static void pat912x_motion_work_handler(struct k_work *work)
 {
     if (!motion_data_ptr) return;
-    struct pat912x_data *data = motion_data_ptr;
+	struct input_pat912x_data *data = CONTAINER_OF(work, struct input_pat912x_data, motion_work);
+//    struct pat912x_data *data = motion_data_ptr;
 	const struct device *dev = data->dev;
 	const struct pat912x_config *cfg = dev->config;
 	int32_t x, y;
@@ -253,7 +252,31 @@ static void motion_timer_handler(struct k_timer *timer)
 	/* Trigger one more scan in case more data is available. */
 //	k_work_submit(&data->motion_work);
 }
+// タイマーハンドラ
+static void motion_timer_handler(struct k_timer *timer)
+{
+	if (!motion_data_ptr) return;
+	struct pat912x_data *data = motion_data_ptr;
+	// const struct pat912x_config *cfg = data->dev->config;
+	// int ret;
 
+	// // LOG_DBG("Motion timer triggered");
+
+	// // Read the motion status
+	// uint8_t val;
+	// ret = i2c_reg_read_byte_dt(&cfg->i2c, PAT912X_MOTION_STATUS, &val);
+	// if (ret < 0) {
+	// 	LOG_ERR("Failed to read motion status: %d", ret);
+	// 	return;
+	// }
+
+	// if ((val & MOTION_STATUS_MOTION) == 0x00) {
+	// 	motion_timer_active = false;
+	// 	return;
+	// }
+
+	k_work_submit(&data->motion_work);
+}
 
 static void pat912x_motion_handler(const struct device *gpio_dev,
 				   struct gpio_callback *cb,
@@ -415,7 +438,7 @@ static int pat912x_init(const struct device *dev)
 
 	data->dev = dev;
 
-	// k_work_init(&data->motion_work, pat912x_motion_work_handler);
+	k_work_init(&data->motion_work, pat912x_motion_work_handler);
 	
 
 	if (!gpio_is_ready_dt(&cfg->motion_gpio)) {
