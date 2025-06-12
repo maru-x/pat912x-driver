@@ -75,6 +75,11 @@ LOG_MODULE_REGISTER(input_pat912x, CONFIG_INPUT_LOG_LEVEL);
 #define AUTOMOUSE_TIMEOUT_MS (DT_PROP(DT_DRV_INST(0), automouse_timeout_ms))
 #define SCROLL_TICKS (DT_PROP(DT_DRV_INST(0), scroll_ticks))
 #define SNIPE_TICKS (DT_PROP(DT_DRV_INST(0), snipe_ticks))
+#define MOTION_TIMER_MS (DT_PROP(DT_DRV_INST(0), motion_timer_ms))
+#define NY_MIN_VALUE (DT_PROP(DT_DRV_INST(0), ny_min_value))
+#define SLEEP1_SET_VALUE (DT_PROP(DT_DRV_INST(0), sleep1_set_value))
+#define SLEEP2_SET_VALUE (DT_PROP(DT_DRV_INST(0), sleep2_set_value))
+
 // ...existing code...
 #ifndef sign_extend
 static inline int sign_extend(unsigned int value, int index)
@@ -285,7 +290,7 @@ static void pat912x_motion_handler(const struct device *gpio_dev,
 	struct pat912x_data *data = CONTAINER_OF(cb, struct pat912x_data, motion_cb);
     motion_data_ptr = data;
     if (!motion_timer_active) {
-        k_timer_start(&motion_timer, K_NO_WAIT, K_MSEC(20));
+        k_timer_start(&motion_timer, K_NO_WAIT, K_MSEC(MOTION_TIMER_MS));
         motion_timer_active = true;
     }
 	// struct pat912x_data *data = CONTAINER_OF(
@@ -379,12 +384,12 @@ static int pat912x_configure(const struct device *dev)
 		return ret;
 	}
 
-	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_SLEEP1, 0x33);
+	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_SLEEP1, SLEEP1_SET_VALUE);
 	if (ret < 0) {
 		return ret;
 	}
 
-	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_SLEEP2, 0x00);
+	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_SLEEP2, SLEEP2_SET_VALUE);
 	if (ret < 0) {
 		return ret;
 	}
@@ -417,7 +422,7 @@ static int pat912x_configure(const struct device *dev)
 	// 	return ret;
 	// }
 
-	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT9126_NY_MIN, 0x01);
+	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT9126_NY_MIN, NY_MIN_VALUE);
 	if (ret < 0) {
 		return ret;
 	}
