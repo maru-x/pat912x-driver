@@ -108,6 +108,8 @@ struct k_timer automouse_layer_timer;
 static bool automouse_triggered = false;
 
 static struct k_timer motion_timer;
+// グローバルで宣言
+static struct pat912x_data *motion_data_ptr = NULL;
 
 static void activate_automouse_layer() {
     automouse_triggered = true;
@@ -125,8 +127,8 @@ K_TIMER_DEFINE(automouse_layer_timer, deactivate_automouse_layer, NULL);
 // タイマーハンドラ
 static void motion_timer_handler(struct k_timer *timer)
 {
-	struct pat912x_data *data = CONTAINER_OF(
-			work, struct pat912x_data, motion_work);
+    if (!motion_data_ptr) return;
+    struct pat912x_data *data = motion_data_ptr;
 	const struct device *dev = data->dev;
 	const struct pat912x_config *cfg = dev->config;
 	int32_t x, y;
@@ -255,8 +257,8 @@ static void pat912x_motion_handler(const struct device *gpio_dev,
 				   struct gpio_callback *cb,
 				   uint32_t pins)
 {
-	// struct pat912x_data *data = CONTAINER_OF(cb, struct pat912x_data, motion_cb);
-    // motion_data_ptr = data;
+	struct pat912x_data *data = CONTAINER_OF(cb, struct pat912x_data, motion_cb);
+    motion_data_ptr = data;
     if (!k_timer_is_active(&motion_timer)) {
         k_timer_start(&motion_timer, K_MSEC(1), K_MSEC(20));
     }
