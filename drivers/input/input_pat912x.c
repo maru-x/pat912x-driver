@@ -251,7 +251,7 @@ static void motion_timer_handler(struct k_timer *timer)
 	/* Trigger one more scan in case more data is available. */
 //	k_work_submit(&data->motion_work);
 }
-K_TIMER_DEFINE(motion_timer, motion_timer_handler, NULL);
+
 
 static void pat912x_motion_handler(const struct device *gpio_dev,
 				   struct gpio_callback *cb,
@@ -267,6 +267,8 @@ static void pat912x_motion_handler(const struct device *gpio_dev,
 
 	// k_work_submit(&data->motion_work);
 }
+
+K_TIMER_DEFINE(motion_timer, motion_timer_handler, NULL);
 
 int pat912x_set_resolution(const struct device *dev,
 			   int16_t res_x_cpi, int16_t res_y_cpi)
