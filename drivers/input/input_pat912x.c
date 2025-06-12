@@ -127,7 +127,7 @@ K_TIMER_DEFINE(automouse_layer_timer, deactivate_automouse_layer, NULL);
 static void pat912x_motion_work_handler(struct k_work *work)
 {
     if (!motion_data_ptr) return;
-	struct pat912x_data *data = CONTAINER_OF(work, struct input_pat912x_data, motion_work);
+	struct pat912x_data *data = CONTAINER_OF(work, struct pat912x_data, motion_work);
 //    struct pat912x_data *data = motion_data_ptr;
 	const struct device *dev = data->dev;
 	const struct pat912x_config *cfg = dev->config;
