@@ -108,6 +108,7 @@ struct k_timer automouse_layer_timer;
 static bool automouse_triggered = false;
 
 struct k_timer motion_timer;
+static bool motion_timer_active = false;
 // グローバルで宣言
 static struct pat912x_data *motion_data_ptr = NULL;
 
@@ -143,6 +144,7 @@ static void motion_timer_handler(struct k_timer *timer)
 
 	if (val== 0x04) {
 		k_timer_stop(&motion_timer);
+		motion_timer_active = false;
 		LOG_DBG("Motion status is 0x04, stopping timer");
 		return;
 	}
@@ -259,8 +261,9 @@ static void pat912x_motion_handler(const struct device *gpio_dev,
 {
 	struct pat912x_data *data = CONTAINER_OF(cb, struct pat912x_data, motion_cb);
     motion_data_ptr = data;
-    if (!k_timer_is_active(&motion_timer)) {
-        k_timer_start(&motion_timer, K_MSEC(1), K_MSEC(20));
+    if (!motion_timer_active) {
+        k_timer_start(&motion_timer, K_NO_WAIT, K_MSEC(20));
+        motion_timer_active = true;
     }
 	// struct pat912x_data *data = CONTAINER_OF(
 	// 		cb, struct pat912x_data, motion_cb);
@@ -325,7 +328,7 @@ static int pat912x_configure(const struct device *dev)
 		LOG_ERR("Invalid product id: %04x", sys_get_be16(id));
 		return -ENOTSUP;
 	}
-
+*/
 	/* Software reset */
 
 	i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_CONFIGURATION, CONFIGURATION_RESET);
