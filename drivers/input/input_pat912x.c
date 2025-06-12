@@ -132,9 +132,13 @@ static void pat912x_motion_work_handler(struct k_work *work)
 		return;
 	}
 
-	if ((val & MOTION_STATUS_MOTION) == 0x00) {
+	if (val== 0x04) {
 		return;
 	}
+
+	// if ((val & MOTION_STATUS_MOTION) == 0x00) {
+	// 	return;
+	// }
 
 	ret = i2c_burst_read_dt(&cfg->i2c, PAT912X_DELTA_X_LO, xy, sizeof(xy));
 	if (ret < 0) {
