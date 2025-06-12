@@ -410,7 +410,7 @@ static int pat912x_init(const struct device *dev)
 	}
 
 	ret = gpio_pin_interrupt_configure_dt(&cfg->motion_gpio,
-					      GPIO_INT_EDGE_ACTIVE);
+					      GPIO_INT_EDGE_TO_ACTIVE);
 	if (ret != 0) {
 		LOG_ERR("Motion interrupt configuration failed: %d", ret);
 		return ret;
