@@ -388,7 +388,7 @@ static int pat912x_configure(const struct device *dev)
 	// 	return ret;
 	// }
 
-	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT9126_NY_MIN, 0x00);
+	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT9126_NY_MIN, 0x01);
 	if (ret < 0) {
 		return ret;
 	}
