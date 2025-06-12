@@ -11,8 +11,7 @@ properties:
   motion-gpios:
     type: phandle-array
     required: true
-    description:
-      GPIO connected to the motion pin, active low.
+    description: GPIO connected to the motion pin, active low.
 
   zephyr,axis-x:
     type: int
@@ -58,6 +57,18 @@ properties:
     description: |
       Enable sleep2 mode, only valid if sleep1 is also enabled.
 
+  sleep1-set-value:
+    type: int
+    default: 0x77
+    description: |
+      Value to set for sleep1 mode, range 0x00 to 0xFF.
+
+  sleep2-set-value:
+    type: int
+    default: 0x10
+    description: |
+      Value to set for sleep2 mode, range 0x00 to 0xFF.
+
   mouse-wheel-x-inverted:
     type: boolean
     description: "Invert the X-axis movement of the mouse wheel."
@@ -98,3 +109,13 @@ properties:
     type: int
     default: 5
     description: "Number of ticks to send when the snipe button is pressed."
+
+  motion-timer-ms:
+    type: int
+    default: 20
+    description: "Time in milliseconds to wait before checking for motion again."
+
+  ny-min-value:
+    type: int
+    default: 1
+    description: "Minimum value for the Y axis to be considered as motion."
