@@ -452,7 +452,7 @@ static int pat912x_init(const struct device *dev)
 	}
 
 	/* Trigger an initial read to clear any pending motion status.*/
-	k_work_submit(&data->motion_work);
+//	k_work_submit(&data->motion_work);
 
 	ret = pm_device_runtime_enable(dev);
 	if (ret < 0) {
