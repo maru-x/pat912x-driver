@@ -107,11 +107,9 @@ struct pat912x_data {
 struct k_timer automouse_layer_timer;
 static bool automouse_triggered = false;
 
+struct k_timer motion_timer;
 // グローバルで宣言
 static struct pat912x_data *motion_data_ptr = NULL;
-
-K_TIMER_DEFINE(automouse_layer_timer, deactivate_automouse_layer, NULL);
-K_TIMER_DEFINE(motion_timer, motion_timer_handler, NULL);
 
 static void activate_automouse_layer() {
     automouse_triggered = true;
@@ -123,7 +121,7 @@ static void deactivate_automouse_layer(struct k_timer *timer) {
     automouse_triggered = false;
     zmk_keymap_layer_deactivate(AUTOMOUSE_LAYER);
 }
-
+K_TIMER_DEFINE(automouse_layer_timer, deactivate_automouse_layer, NULL);
 
 //static void pat912x_motion_work_handler(struct k_work *work)
 // タイマーハンドラ
@@ -253,7 +251,7 @@ static void motion_timer_handler(struct k_timer *timer)
 	/* Trigger one more scan in case more data is available. */
 //	k_work_submit(&data->motion_work);
 }
-
+K_TIMER_DEFINE(motion_timer, motion_timer_handler, NULL);
 
 static void pat912x_motion_handler(const struct device *gpio_dev,
 				   struct gpio_callback *cb,
