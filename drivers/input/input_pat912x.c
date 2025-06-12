@@ -44,6 +44,7 @@ LOG_MODULE_REGISTER(input_pat912x, CONFIG_INPUT_LOG_LEVEL);
 
 #define PAT9126_AE_ENABLE	0x2b
 #define PAT9126_NY_MIN		0x2d
+#define PAT9126_SENSOR_MODE_SELECT_REG	0x7c
 
 //#define PRODUCT_ID_PAT9125EL 0x3191
 
@@ -63,6 +64,8 @@ LOG_MODULE_REGISTER(input_pat912x, CONFIG_INPUT_LOG_LEVEL);
 #define PAT912X_DATA_SIZE_BITS 12
 
 #define PAT9126_AE_ENABLE_VAL	0x6D
+#define PAT9126_SENSOR_SET_MODE		0xCC
+#define PAT9126_SENSOR_SET_MODE2	0x82
 
 #define RESET_DELAY_MS 2
 
@@ -323,6 +326,11 @@ static int pat912x_configure(const struct device *dev)
 	i2c_burst_read_dt(&cfg->i2c, 0x00, temp, sizeof(temp));
 	i2c_burst_read_dt(&cfg->i2c, 0x10, temp, sizeof(temp));
 	i2c_burst_read_dt(&cfg->i2c, 0x20, temp, sizeof(temp));
+
+	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT9126_SENSOR_MODE_SELECT_REG, PAT9126_SENSOR_SET_MODE2);
+	if (ret < 0) {
+		return ret;
+	}
 
 	ret = pat912x_set_resolution(dev, cfg->res_x_cpi, cfg->res_y_cpi);
 	if (ret < 0) {
