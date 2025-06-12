@@ -107,7 +107,6 @@ struct pat912x_data {
 struct k_timer automouse_layer_timer;
 static bool automouse_triggered = false;
 
-static struct k_timer motion_timer;
 // グローバルで宣言
 static struct pat912x_data *motion_data_ptr = NULL;
 
