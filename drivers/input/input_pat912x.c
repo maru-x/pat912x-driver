@@ -110,14 +110,11 @@ struct pat912x_data {
 	struct gpio_callback motion_cb;
 };
 
-
-
 struct k_timer automouse_layer_timer;
 static bool automouse_triggered = false;
 
 struct k_timer motion_timer;
 static bool motion_timer_active = false;
-// グローバルで宣言
 static struct pat912x_data *motion_data_ptr = NULL;
 
 static void activate_automouse_layer() {
@@ -143,10 +140,8 @@ static void pat912x_motion_work_handler(struct k_work *work)
 
 static void pat912x_timer_work_handler(struct k_work *work)
 {
-	struct pat912x_data *data = motion_data_ptr;
 	if (!motion_data_ptr) return;
-	// struct pat912x_data *data = CONTAINER_OF(work, struct pat912x_data, timer_work);
-//    struct pat912x_data *data = motion_data_ptr;
+	struct pat912x_data *data = motion_data_ptr;
 	const struct device *dev = data->dev;
 	const struct pat912x_config *cfg = dev->config;
 	int32_t x, y;
@@ -165,10 +160,6 @@ static void pat912x_timer_work_handler(struct k_work *work)
 		LOG_DBG("Motion status is 0x04, stopping timer");
 		return;
 	}
-
-	// if ((val & MOTION_STATUS_MOTION) == 0x00) {
-	// 	return;
-	// }
 
 	ret = i2c_burst_read_dt(&cfg->i2c, PAT912X_DELTA_X_LO, xy, sizeof(xy));
 	if (ret < 0) {
@@ -255,44 +246,12 @@ static void pat912x_timer_work_handler(struct k_work *work)
 
 
 	}
-
-
-	// if (cfg->axis_x >= 0) {
-	// 	bool sync = cfg->axis_y < 0;
-
-	// 	input_report_rel(data->dev, cfg->axis_x, x, sync, K_FOREVER);
-	// }
-
-	// if (cfg->axis_y >= 0) {
-	// 	input_report_rel(data->dev, cfg->axis_y, y, true, K_FOREVER);
-	// }
-
-	/* Trigger one more scan in case more data is available. */
-//	k_work_submit(&data->motion_work);
 }
 // タイマーハンドラ
 static void motion_timer_handler(struct k_timer *timer)
 {
 	if (!motion_data_ptr) return;
 	struct pat912x_data *data = motion_data_ptr;
-	// const struct pat912x_config *cfg = data->dev->config;
-	// int ret;
-
-	// // LOG_DBG("Motion timer triggered");
-
-	// // Read the motion status
-	// uint8_t val;
-	// ret = i2c_reg_read_byte_dt(&cfg->i2c, PAT912X_MOTION_STATUS, &val);
-	// if (ret < 0) {
-	// 	LOG_ERR("Failed to read motion status: %d", ret);
-	// 	return;
-	// }
-
-	// if ((val & MOTION_STATUS_MOTION) == 0x00) {
-	// 	motion_timer_active = false;
-	// 	return;
-	// }
-
 	k_work_submit(&data->timer_work);
 }
 
@@ -304,15 +263,6 @@ static void pat912x_motion_handler(const struct device *gpio_dev,
     motion_data_ptr = data;
 
 	k_work_submit(&data->motion_work);
-
-    // if (!motion_timer_active) {
-    //     k_timer_start(&motion_timer, K_NO_WAIT, K_MSEC(MOTION_TIMER_MS));
-    //     motion_timer_active = true;
-    // }
-	// struct pat912x_data *data = CONTAINER_OF(
-	// 		cb, struct pat912x_data, motion_cb);
-
-	// k_work_submit(&data->motion_work);
 }
 
 K_TIMER_DEFINE(motion_timer, motion_timer_handler, NULL);
@@ -368,16 +318,10 @@ static int pat912x_configure(const struct device *dev)
 		return -ENOTSUP;
 	}
 
-/*	if (sys_get_be16(id) != PRODUCT_ID_PAT9125EL) {
-		LOG_ERR("Invalid product id: %04x", sys_get_be16(id));
-		return -ENOTSUP;
-	}
-*/
 	/* Software reset */
-
 	i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_CONFIGURATION, CONFIGURATION_RESET);
-	/* no ret value check, the device NACKs */
 
+	/* no ret value check, the device NACKs */
 	k_sleep(K_MSEC(RESET_DELAY_MS));
 
 	ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_CONFIGURATION, CONFIGURATION_CLEAR);
@@ -494,9 +438,6 @@ static int pat912x_init(const struct device *dev)
 		LOG_ERR("Could not set motion callback: %d", ret);
 		return ret;
 	}
-
-	/* Trigger an initial read to clear any pending motion status.*/
-//	k_work_submit(&data->motion_work);
 
 	ret = pm_device_runtime_enable(dev);
 	if (ret < 0) {
